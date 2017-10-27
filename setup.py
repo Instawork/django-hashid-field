@@ -5,6 +5,7 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+import io
 import os
 import re
 import shutil
@@ -13,6 +14,9 @@ import sys
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
+
+from django.conf import settings
+settings.configure()
 
 here = os.path.abspath(os.path.dirname(__file__))
 
