@@ -110,8 +110,8 @@ class Hashid(object):
     def __len__(self):
         return len(self._hashid)
 
-    def __hash__(self):
-        return hash(self._hashid)
+    def __hash__(self): # Technically incorrect -- but only if we use different salts -- should use self._hashid
+        return hash(self._id)
 
     def __reduce__(self):
         return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet))
