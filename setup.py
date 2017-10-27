@@ -6,6 +6,7 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+import io
 import os
 import re
 import shutil
@@ -34,6 +35,12 @@ version = get_version('hashid_field')
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+if sys.argv[-1] == 'publish':
+    if os.system("pip freeze | grep twine"):
+        print("twine not installed.\nUse `pip install twine`.\nExiting.")
+        sys.exit()
+    os.system('python setup.py sdist bdist_wheel')
+
 
 if sys.argv[-1] == 'publish':
     if os.system("pip freeze | grep twine"):
@@ -48,6 +55,7 @@ if sys.argv[-1] == 'publish':
     shutil.rmtree('build')
     shutil.rmtree('django_hashid_field.egg-info')
     sys.exit()
+
 
 
 setup(
