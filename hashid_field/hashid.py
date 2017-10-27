@@ -4,6 +4,23 @@ from functools import total_ordering
 from hashids import Hashids, _is_uint
 
 
+class lazy_property(object):
+    '''
+    meant to be used for lazy evaluation of an object attribute.
+    property should represent non-mutable data, as it replaces itself.
+    '''
+
+    def __init__(self, fget):
+        self.fget = fget
+        self.func_name = fget.__name__
+
+    def __get__(self, obj, cls):
+        if obj is None:
+            return None
+        value = self.fget(obj)
+        setattr(obj, self.func_name, value)
+        return value
+
 @total_ordering
 class Hashid(object):
     def __init__(self, id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
@@ -11,13 +28,15 @@ class Hashid(object):
         self._min_length = min_length
         self._alphabet = alphabet
 
-        self._hashids = Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
+        # If integer, just move on, no need to decode!
+        if isinstance(id, int) or isinstance(id, long):
+            self._id = id
+            return
 
         # First see if we were given an already-encoded and valid Hashids string
         value = self.decode(id)
         if value is not None:
             self._id = value
-            self._hashid = id
         else:
             # Next see if it's a positive integer
             try:
@@ -29,7 +48,14 @@ class Hashid(object):
 
             # Finally, set our internal values
             self._id = id
-            self._hashid = self.encode(id)
+
+    @lazy_property
+    def _hashids(self):
+        return Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
+
+    @lazy_property
+    def _hashid(self):
+        return self.encode(self._id)
 
     @property
     def id(self):
@@ -84,8 +110,8 @@ class Hashid(object):
     def __len__(self):
         return len(self._hashid)
 
-    def __hash__(self):
-        return hash(self._hashid)
+    def __hash__(self): # Technically incorrect -- but only if we use different salts -- should use self._hashid
+        return hash(self._id)
 
     def __reduce__(self):
         return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet))
