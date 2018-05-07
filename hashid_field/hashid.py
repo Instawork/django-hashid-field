@@ -30,7 +30,7 @@ class Hashid(object):
         self._alphabet = alphabet
 
         # If integer, just move on, no need to decode!
-        if (isinstance(id, int) or isinstance(id, long)) and id >= 0:
+        if isinstance(id, six.integer_types) and id >= 0:
             self._id = id
             return
 
@@ -90,7 +90,7 @@ class Hashid(object):
         return self._id
 
     def __long__(self):
-        if sys.version_info < (3,):
+        if six.PY2:
             return long(self._id)
         else:
             return int(self._id)
