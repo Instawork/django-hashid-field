@@ -30,7 +30,7 @@ class Hashid(object):
         self._alphabet = alphabet
 
         # If integer, just move on, no need to decode!
-        if (isinstance(id, int) or isinstance(id, long)) and id >= 0:
+        if isinstance(id, six.integer_types) and id >= 0:
             self._id = id
             return
 
