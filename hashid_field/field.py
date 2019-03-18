@@ -1,5 +1,6 @@
 import warnings
 
+import django
 from django import forms
 from django.core import exceptions, checks
 from django.db import models
@@ -73,10 +74,16 @@ class HashidFieldMixin(object):
     def encode_id(self, id):
         return Hashid(id, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
 
-    def from_db_value(self, value, expression, connection, context):
-        if value is None:
-            return value
-        return self.encode_id(value)
+    if django.VERSION < (2, 0):
+        def from_db_value(self, value, expression, connection, context):
+            if value is None:
+                return value
+            return self.encode_id(value)
+    else:
+        def from_db_value(self, value, expression, connection):
+            if value is None:
+                return value
+            return self.encode_id(value)
 
     def get_lookup(self, lookup_name):
         if lookup_name in self.exact_lookups:
@@ -84,7 +91,7 @@ class HashidFieldMixin(object):
         if lookup_name in self.iterable_lookups:
             return HashidIterableLookup
         if lookup_name in self.passthrough_lookups:
-            return super().get_lookup(lookup_name)
+            return super(HashidFieldMixin, self).get_lookup(lookup_name)
         return None  # Otherwise, we don't allow lookups of this type
 
     def to_python(self, value):

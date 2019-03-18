@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.5] - 2018-10-31
+### Changes
+- [#29] / [#30]: Fixed exception when decoding a Hashids value of 0.
+         (Thanks [Lee H](https://github.com/fpghost))
+
+## [2.1.4] - 2018-10-05
+### Changes
+- [#27]: Fixed PendingDeprectationWarning for `context` in `from_db_value()`.
+         (Thanks [Adam Johnson](https://github.com/adamchainz))
+
+## [2.1.3] - 2018-09-21
+### Changes
+- [#26]: Fixed version import error. (Thanks [Dido Arellano](https://github.com/didoarellano))
+
+## [2.1.2] - 2018-09-11
+### Changes
+- [#24]: Added official support for Django 2.1. (Thanks [Adam Tokarski](https://github.com/adam-tokarski))
+- Deprecated support for Python 3.5, Django 1.8 - 1.10. Next major release will drop support completely.
+- Updated Django Rest Framework support to 3.8.
+- Clarified README (Issue #23)
+
+## [2.1.1] - 2018-03-15
+### Changes
+- Update documentation for DRF integration
+
+## [2.1.0] - 2017-12-10
+### Changes
+- Added support for pickling Hashid instances (Thanks [Oleg Pesok](https://github.com/olegpesok))
+- Add `long` comparisons for python2 (Thanks [Oleg Pesok](https://github.com/olegpesok))
+- Add support for Django 2.0. (Thanks [Paul Nakata](https://github.com/pmn))
+
+Please note: 1.8 will be supported until April at least (same as Django), but after that we may support only
+Django 1.11 and 2.0, per Django's recommendations and release schedule.
+
+Django Rest Framework has dropped support for Django 1.8 and 1.9 as of their 3.7.x line, and there are import bugs
+with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django 1.8 -> 1.11, and DRF 3.7 for 2.0.
+
 ## [2.0.1] - 2017-10-04
 ### Changes
 - Field option 'allow_int' renamed to 'allow_int_lookup' to be more descriptive. Using 'allow_int' will print
@@ -101,6 +138,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
+[2.1.5]: https://github.com/nshafer/django-hashid-field/compare/2.1.4...2.1.5
+[2.1.4]: https://github.com/nshafer/django-hashid-field/compare/2.1.3...2.1.4
+[2.1.3]: https://github.com/nshafer/django-hashid-field/compare/2.1.2...2.1.3
+[2.1.2]: https://github.com/nshafer/django-hashid-field/compare/2.1.1...2.1.2
+[2.1.1]: https://github.com/nshafer/django-hashid-field/compare/2.1.0...2.1.1
+[2.1.0]: https://github.com/nshafer/django-hashid-field/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.1
 [1.3.0]: https://github.com/nshafer/django-hashid-field/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/nshafer/django-hashid-field/compare/1.2.2...1.2.3
@@ -110,3 +153,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 [1.1.0]: https://github.com/nshafer/django-hashid-field/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/nshafer/django-hashid-field/compare/0.1.6...1.0.0
+
+[#24]: https://github.com/nshafer/django-hashid-field/pull/24
+[#26]: https://github.com/nshafer/django-hashid-field/pull/26
+[#27]: https://github.com/nshafer/django-hashid-field/issues/27
+[#29]: https://github.com/nshafer/django-hashid-field/issues/29
+[#30]: https://github.com/nshafer/django-hashid-field/pull/30

@@ -1,5 +1,7 @@
 import pickle
+from unittest import skipIf
 
+import sys
 from django.test import TestCase
 from django.utils.encoding import force_text
 
@@ -23,6 +25,11 @@ class HashidTests(TestCase):
     def test_negative_integer(self):
         with self.assertRaises(Exception):
             h = Hashid(-5)
+
+    def test_hashid_encoded_zero_integer(self):
+        h = Hashid(0)
+        z = Hashid(h.hashid)
+        self.assertEqual(h, z)
 
     def test_invalid_hashid(self):
         with self.assertRaises(Exception):
@@ -58,6 +65,7 @@ class HashidTests(TestCase):
         a = Hashid(1)
         self.assertEqual(int(a), 1)
 
+    @skipIf(sys.version_info >= (3,), "Only tested on Python 2")
     def test_typecast_to_long(self):
         a = Hashid(1)
         self.assertEqual(long(a), 1)
@@ -74,6 +82,7 @@ class HashidTests(TestCase):
         a = Hashid(1)
         self.assertTrue(int(a) == a)
 
+    @skipIf(sys.version_info >= (3,), "Only tested on Python 2")
     def test_long_compare(self):
         a = Hashid(1)
         self.assertTrue(long(a) == a)

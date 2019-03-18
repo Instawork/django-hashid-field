@@ -21,7 +21,8 @@ Features
 * Allows specifying a salt globally
 * Supports custom *salt*, *min_length*, *alphabet* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
-* Supports common filtering lookups, such as ``field__icontains`` so that Django Admin search_fields works out of the box.
+* Supports exact ID searches in Django Admin when field is specified in search_fields.
+* Supports common filtering lookups, such as ``__iexact``, ``__contains``, ``__icontains``, though matching is the same as ``__exact``.
 * Supports subquery lookups with ``field__in=queryset``
 * Supports hashing operations so the fields can be used in Dictionaries and Sets.
 
@@ -30,10 +31,12 @@ Requirements
 
 This module is tested and known to work with:
 
-* Python 2.7, 3.5
-* Django 1.8, 1.9, 1.10, 1.11
+* Python 2.7, 3.6, 3.7
+* Django 1.11, 2.0, 2.1
 * Hashids 1.2
-* Django REST Framework 3.6
+* Django REST Framework 3.8
+
+Django versions <= 1.10 will still work for the time being in version 2.1.x, but are deprecated and not tested.
 
 Installation
 ------------
@@ -358,6 +361,14 @@ behavior to debug, or in the worst case, corruption of your data. Here is an exa
             model = Book
             fields = ('id', 'reference_id')
 
+
+    class AuthorSerializer(serializers.ModelSerializer):
+        id = HashidSerializerCharField(source_field='library.Author.id', read_only=True)
+
+        class Meta:
+            model = Author
+            fields = ('id', 'name')
+
 The ``source_field`` allows the HashidSerializerCharField to copy the 'salt', 'min_length' and 'alphabet' settings from
 the given field at ``app_name.model_name.field_name`` so that it can be defined in just one place. Explicit settings are
 also possible:
@@ -379,7 +390,10 @@ Primary Key Related Fields
 Any models that have a ForeignKey to another model that uses a Hashid*Field as its Primary Key will need to explicitly
 define how the
 `PrimaryKeyRelatedField <http://www.django-rest-framework.org/api-guide/relations/#primarykeyrelatedfield>`_
-should serialize and deserialize the resulting value using the ``pk_field`` argument. For the given ``Author`` model defined
+should serialize and deserialize the resulting value using the ``pk_field`` argument. If you don't you will get an error
+such as "Hashid(60): N8VNa8z is not JSON serializable". We have to tell DRF how to serialize/deserialize Hashid*Fields.
+
+For the given ``Author`` model defined
 above that has an ``id = HashidAutoField(primary_key=True)`` set, your BookSerializer should look like the following.
 
 .. code-block:: python
@@ -389,7 +403,9 @@ above that has an ``id = HashidAutoField(primary_key=True)`` set, your BookSeria
 
 
     class BookSerializer(serializers.ModelSerializer):
-        author = serializers.PrimaryKeyRelatedField(pk_field=HashidSerializerCharField(source_field='library.Author.id'), read_only=True)
+        author = serializers.PrimaryKeyRelatedField(
+            pk_field=HashidSerializerCharField(source_field='library.Author.id'),
+            read_only=True)
 
         class Meta:
             model = Book
@@ -400,6 +416,12 @@ as described above.
 
 This example sets ``read_only=True`` but you can explicitly define a ``queryset`` or override ``get_queryset(self)`` to allow
 read-write behavior.
+
+.. code-block:: python
+
+    author = serializers.PrimaryKeyRelatedField(
+        pk_field=HashidSerializerCharField(source_field='library.Author.id'),
+        queryset=Author.objects.all())
 
 For a ManyToManyField, you must also remember to pass ``many=True`` to the ``PrimaryKeyRelatedField``.
 
