@@ -98,6 +98,8 @@ class Hashid(object):
             return self._hashid == other
         if isinstance(other, int):
             return self._id == other
+        if other is None:
+            return self._id is None
         return NotImplemented
 
     def __ne__(self, other):
