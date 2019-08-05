@@ -100,6 +100,9 @@ class Hashid(object):
             return self._id == other
         return NotImplemented
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __lt__(self, other):
         if isinstance(other, self.__class__):
             return self._id < other._id
